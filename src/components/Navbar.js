@@ -6,7 +6,7 @@ import { User, ShoppingCart } from "lucide-react"; // ← Import des icônes mod
 
 export default function Navbar() {
   return (
-    <nav className="bg-white shadow px-6 py-4">
+    <nav className="bg-green-600 px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Logo à gauche */}
         <Link href="/">
