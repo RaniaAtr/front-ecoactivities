@@ -1,11 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "../../../services/auth";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -15,18 +14,30 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
-    if (!form.email.trim() || !form.password.trim()) {
-      return setError("Tous les champs sont obligatoires.");
-    }
-
+    setError(null);
     setLoading(true);
 
     try {
-      const res = await login(form); // appel à services/auth.js
-      localStorage.setItem("token", res.token); // stocker le token JWT
-      router.push("/"); // redirection après connexion
+      const res = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        throw json;
+      }
+
+      // Exemple : stocker le token reçu dans localStorage
+      if (json.token) {
+        localStorage.setItem("token", json.token);
+      }
+
+      // Rediriger après connexion réussie
+      router.push("/");
+
     } catch (err) {
       setError(err.message || "Erreur de connexion.");
     } finally {
@@ -42,7 +53,11 @@ export default function LoginPage() {
       >
         <h2 className="text-2xl font-bold text-center text-green-700">Se connecter</h2>
 
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {error && (
+          <div className="mb-4 p-4 rounded bg-red-100 text-red-500 border border-red-300">
+            {typeof error === "string" ? error : Object.values(error).map((msg, i) => <li key={i}>* {msg}</li>)}
+          </div>
+        )}
 
         <input
           type="email"
@@ -52,6 +67,7 @@ export default function LoginPage() {
           onChange={handleChange}
           className="w-full border px-4 py-2 rounded"
           disabled={loading}
+          required
         />
 
         <input
@@ -62,6 +78,7 @@ export default function LoginPage() {
           onChange={handleChange}
           className="w-full border px-4 py-2 rounded"
           disabled={loading}
+          required
         />
 
         <button
