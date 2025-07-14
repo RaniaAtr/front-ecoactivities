@@ -10,29 +10,10 @@ export default function RegisterPage() {
     password: "",
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState({});
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  //  Appel  au backend Symfony
-  const register = async (data) => {
-    const response = await fetch("http://127.0.0.1:8000/api/users/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Erreur lors de l’inscription.");
-    }
-
-    return await response.json();
-  };
-
-  const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,40 +21,48 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+   try {
+    const response = await fetch("http://localhost:3000/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+    const json = await response.json();
+
+    if (!response.ok) {
+      throw json 
+    }
+    
+    setSuccess(json.message);
+    console.log (json.message);
     setError("");
+  }
+  catch (erreur) {
+    console.error(erreur);
+    setError(erreur);
+    setSuccess("");
 
-    // ✅ Validation simple
-    if (!form.prenom.trim() || !form.nom.trim() || !form.email.trim() || !form.password.trim()) {
-      return setError("Tous les champs sont obligatoires.");
-    }
-    if (!validateEmail(form.email)) {
-      return setError("Email invalide.");
-    }
-    if (form.password.length < 6) {
-      return setError("Le mot de passe doit contenir au moins 6 caractères.");
-    }
-
-    setLoading(true);
-
-    try {
-      await register(form);
-      router.push("/login"); // ✅ Redirection après succès
-    } catch (err) {
-      setError(err.message || "Erreur lors de l’inscription.");
-    } finally {
-      setLoading(false);
-    }
-  };
+}
+   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50 p-4">
+     
+      
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-lg shadow-md w-full max-w-md space-y-4"
       >
         <h2 className="text-2xl font-bold text-center text-green-700">Créer un compte</h2>
 
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {/*error && <p className="text-red-500 text-center">{error}</p>*/}
+        {Object.values(error).map((msg, i) => (
+                    <li key={i}>* {msg}</li>
+                ))}
+        {success && <p className="text-green-500 text-center">{success}</p>}
 
         <input
           type="text"
@@ -83,6 +72,7 @@ export default function RegisterPage() {
           onChange={handleChange}
           className="w-full border px-4 py-2 rounded"
           disabled={loading}
+          
         />
 
         <input
@@ -93,6 +83,8 @@ export default function RegisterPage() {
           onChange={handleChange}
           className="w-full border px-4 py-2 rounded"
           disabled={loading}
+          
+          
         />
 
         <input
@@ -103,6 +95,8 @@ export default function RegisterPage() {
           onChange={handleChange}
           className="w-full border px-4 py-2 rounded"
           disabled={loading}
+          //required
+          
         />
 
         <input
@@ -113,6 +107,7 @@ export default function RegisterPage() {
           onChange={handleChange}
           className="w-full border px-4 py-2 rounded"
           disabled={loading}
+          //required
         />
 
         <button
