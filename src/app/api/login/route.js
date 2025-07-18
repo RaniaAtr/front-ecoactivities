@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers';
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -8,13 +10,27 @@ export async function POST(request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-      credentials: 'include', // ⬅️ important si tu utilises des cookies/session côté Symfony
     });
 
     const json = await res.json();
 
-    return new Response(JSON.stringify(json), {
-      status: res.status,
+    if (!res.ok) {
+      return new Response(JSON.stringify(json), {
+        status: res.status,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // On stocke le token dans un cookie sécurisé
+    cookies().set('token', json.token, {
+      httpOnly: true, // Sécurité : pas accessible via JS client
+      path: '/',
+      maxAge: 60 * 60, // 1h
+      sameSite: 'lax', // ou 'strict' selon ton besoin
+    });
+
+    return new Response(JSON.stringify({ message: 'Connexion réussie' }), {
+      status: 200,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -22,7 +38,7 @@ export async function POST(request) {
 
   } catch (err) {
     return new Response(
-      JSON.stringify({ message: 'Une erreur technique est survenue' }),
+      JSON.stringify({ message: 'Erreur serveur' }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
