@@ -66,7 +66,7 @@ export default function AdminActivitiesPage() {
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2 border">Titre</th>
-              <th className="p-2 border">Catégorie</th>
+              <th className="p-2 border">Tag</th>
               <th className="p-2 border">Date</th>
               <th className="p-2 border">Actions</th>
             </tr>
@@ -75,7 +75,7 @@ export default function AdminActivitiesPage() {
             {activities.map((activity) => (
               <tr key={activity.id} className="text-center">
                 <td className="p-2 border">{activity.titre}</td>
-                <td className="p-2 border">{activity.categorie}</td>
+                <td className="p-2 border">{activity.tag}</td>
                 <td className="p-2 border">
                   {new Date(activity.date).toLocaleString()}
                 </td>
