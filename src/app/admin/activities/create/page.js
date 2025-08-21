@@ -8,7 +8,7 @@ export default function CreateActivityPage() {
     titre: '',
     adresse: '',
     date: '',
-    categorie: '',
+    tag: '',
     tarif: '',
     image: '',
     duree: '',
@@ -81,9 +81,9 @@ export default function CreateActivityPage() {
           required
         />
         <input
-          name="categorie"
-          placeholder="Catégorie"
-          value={form.categorie}
+          name="tag"
+          placeholder="Tag"
+          value={form.tag}
           onChange={handleChange}
           className="w-full border p-2 rounded"
         />
