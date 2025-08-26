@@ -11,7 +11,7 @@ export default function CreateActivityPage() {
     tag: '',
     tarif: '',
     image: '',
-    duree: '',
+    duree: '', // en minutes
   });
 
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ export default function CreateActivityPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -27,16 +27,20 @@ export default function CreateActivityPage() {
     setLoading(true);
 
     try {
+      const dateValue = form.date ? new Date(form.date).toISOString() : null;
+      const body = {
+        ...form,
+        date: dateValue,
+        duree: form.duree ? parseInt(form.duree) : 0,
+      };
+
       const res = await fetch('/api/activities', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
-
       if (res.ok) {
         alert('Activité créée avec succès !');
         router.push('/admin/activities');
@@ -54,68 +58,15 @@ export default function CreateActivityPage() {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Créer une Activité</h1>
-
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="titre"
-          placeholder="Titre"
-          value={form.titre}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          name="adresse"
-          placeholder="Adresse"
-          value={form.adresse}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="datetime-local"
-          name="date"
-          value={form.date}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          name="tag"
-          placeholder="Tag"
-          value={form.tag}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="number"
-          step="0.01"
-          name="tarif"
-          placeholder="Tarif (€)"
-          value={form.tarif}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          name="image"
-          placeholder="URL de l'image"
-          value={form.image}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          name="duree"
-          placeholder="Durée (ex: 60 min)"
-          value={form.duree}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
+        <input name="titre" placeholder="Titre" value={form.titre} onChange={handleChange} className="w-full border p-2 rounded" required />
+        <input name="adresse" placeholder="Adresse" value={form.adresse} onChange={handleChange} className="w-full border p-2 rounded" required />
+        <input type="datetime-local" name="date" value={form.date} onChange={handleChange} className="w-full border p-2 rounded" required />
+        <input name="tag" placeholder="Tag" value={form.tag} onChange={handleChange} className="w-full border p-2 rounded" />
+        <input type="number" step="0.01" name="tarif" placeholder="Tarif (€)" value={form.tarif} onChange={handleChange} className="w-full border p-2 rounded" />
+        <input name="image" placeholder="URL de l'image" value={form.image} onChange={handleChange} className="w-full border p-2 rounded" />
+        <input type="number" name="duree" placeholder="Durée (minutes)" value={form.duree} onChange={handleChange} className="w-full border p-2 rounded" />
+        <button type="submit" disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
           {loading ? 'Création...' : 'Créer'}
         </button>
       </form>
