@@ -8,7 +8,6 @@ export default function AdminActivitiesPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Charger les activités dès que la page se charge
   useEffect(() => {
     fetch('/api/activities')
       .then(res => res.json())
@@ -22,7 +21,6 @@ export default function AdminActivitiesPage() {
       });
   }, []);
 
-  // Supprimer une activité (avec confirmation)
   const handleDelete = async (id) => {
     const confirmDelete = confirm('Voulez-vous vraiment supprimer cette activité ?');
     if (!confirmDelete) return;
@@ -31,10 +29,8 @@ export default function AdminActivitiesPage() {
       const res = await fetch(`/api/activities/${id}`, {
         method: 'DELETE',
       });
-
       const result = await res.json();
       if (res.ok) {
-        // Mettre à jour la liste sans recharger la page
         setActivities(activities.filter(act => act.id !== id));
         alert('Activité supprimée avec succès');
       } else {
@@ -72,29 +68,40 @@ export default function AdminActivitiesPage() {
             </tr>
           </thead>
           <tbody>
-            {activities.map((activity) => (
-              <tr key={activity.id} className="text-center">
-                <td className="p-2 border">{activity.titre}</td>
-                <td className="p-2 border">{activity.tag}</td>
-                <td className="p-2 border">
-                  {new Date(activity.date).toLocaleString()}
-                </td>
-                <td className="p-2 border space-x-2">
-                  <button
-                    onClick={() => router.push(`/admin/activities/${activity.id}`)}
-                    className="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500"
-                  >
-                    Modifier
-                  </button>
-                  <button
-                    onClick={() => handleDelete(activity.id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    Supprimer
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {activities.map((activity) => {
+              const dateObj = activity.date ? new Date(activity.date) : null;
+              const formattedDate = dateObj
+                ? dateObj.toLocaleString('fr-FR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : 'Non définie';
+
+              return (
+                <tr key={activity.id} className="text-center">
+                  <td className="p-2 border">{activity.titre}</td>
+                  <td className="p-2 border">{activity.tag}</td>
+                  <td className="p-2 border">{formattedDate}</td>
+                  <td className="p-2 border space-x-2">
+                    <button
+                      onClick={() => router.push(`/admin/activities/${activity.id}`)}
+                      className="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      onClick={() => handleDelete(activity.id)}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Supprimer
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

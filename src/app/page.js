@@ -1,11 +1,13 @@
-import Navbar from "../components/Navbar"; // adapte le chemin
+import Navbar from "../components/Navbar"; 
+import Filters from "../components/Filters";
 
 export default function HomePage() {
   return (
     <div>
-      <Navbar />           {/* ← Elle s’affiche ici */}
-      <h1>Bienvenue sur la page d'accueil</h1>
-      {/* Autres contenus */}
+      <Navbar /> 
+      <Filters />         
+      
+      
     </div>
   );
 }
