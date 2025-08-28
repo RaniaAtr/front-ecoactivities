@@ -30,14 +30,11 @@ export default function LoginPage() {
         throw json;
       }
 
-      // Exemple : stocker le token reçu dans localStorage
       if (json.token) {
         localStorage.setItem("token", json.token);
       }
 
-      // Rediriger après connexion réussie
       router.push("/");
-
     } catch (err) {
       setError(err.message || "Erreur de connexion.");
     } finally {
@@ -51,11 +48,15 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-lg shadow-md w-full max-w-md space-y-4"
       >
-        <h2 className="text-2xl font-bold text-center text-green-700">Se connecter</h2>
+        <h2 className="text-2xl font-bold text-center text-green-700">
+          Se connecter
+        </h2>
 
         {error && (
           <div className="mb-4 p-4 rounded bg-red-100 text-red-500 border border-red-300">
-            {typeof error === "string" ? error : Object.values(error).map((msg, i) => <li key={i}>* {msg}</li>)}
+            {typeof error === "string"
+              ? error
+              : Object.values(error).map((msg, i) => <li key={i}>* {msg}</li>)}
           </div>
         )}
 
@@ -88,6 +89,15 @@ export default function LoginPage() {
         >
           {loading ? "Connexion..." : "Se connecter"}
         </button>
+
+        <p className="text-sm text-center">
+          <a
+            href="/forgotPassword"
+            className="text-green-700 hover:underline"
+          >
+            Mot de passe oublié ?
+          </a>
+        </p>
 
         <p className="text-sm text-center">
           Pas encore de compte ?{" "}
