@@ -20,15 +20,25 @@ export default function ProfilPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        console.log("Début fetch profil");
+
         const res = await fetch("/api/user/me", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          credentials: "include", // important pour envoyer les cookies
         });
 
-        if (!res.ok) throw await res.json();
+        console.log("Réponse fetch:", res);
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            router.push("/login");
+          }
+          const errData = await res.json();
+          throw errData;
+        }
 
         const data = await res.json();
+        console.log("Données utilisateur:", data);
+
         setUser(data);
         setForm({
           prenom: data.prenom || "",
@@ -37,18 +47,20 @@ export default function ProfilPage() {
           password: "",
         });
       } catch (err) {
-        setError(err.message || "Erreur lors du chargement du profil.");
+        console.error("Erreur fetchUser:", err);
+        const msg = err?.message || err?.msg || JSON.stringify(err) || "Erreur lors du chargement du profil.";
+        setError(msg);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [router]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Mise à jour profil
+  // ✅ Mise à jour du profil
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -60,17 +72,22 @@ export default function ProfilPage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(form),
+        credentials: "include", // cookie envoyé au backend
+        body: JSON.stringify(
+          form.password ? form : { ...form, password: undefined } // supprime password si vide
+        ),
       });
 
       const json = await res.json();
       if (!res.ok) throw json;
 
       setSuccess({ message: "Profil mis à jour avec succès" });
+      setForm((prev) => ({ ...prev, password: "" }));
     } catch (err) {
-      setError(err.message || "Erreur lors de la mise à jour.");
+      console.error("Erreur handleSubmit:", err);
+      const msg = err?.message || err?.msg || JSON.stringify(err) || "Erreur lors de la mise à jour.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -83,18 +100,17 @@ export default function ProfilPage() {
     try {
       const res = await fetch(`/api/user/${user.id}/delete`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        credentials: "include", // cookie envoyé au backend
       });
 
       const json = await res.json();
       if (!res.ok) throw json;
 
-      localStorage.removeItem("token");
       router.push("/register");
     } catch (err) {
-      setError(err.message || "Erreur lors de la suppression.");
+      console.error("Erreur handleDelete:", err);
+      const msg = err?.message || err?.msg || JSON.stringify(err) || "Erreur lors de la suppression.";
+      setError(msg);
     }
   };
 

@@ -1,46 +1,49 @@
-const API_BASE_URL = "http://localhost:8000/reset-password";
+export async function POST(req) {
+  try {
+    const body = await req.json();
+    const { email, token, password } = body;
 
-/**
- * Envoyer la demande de réinitialisation de mot de passe
- * @param {string} email
- * @returns {Promise<Object>}
- */
-export async function requestPasswordReset(email) {
-  const res = await fetch(`${API_BASE_URL}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email }),
-  });
+    // Demande de réinitialisation par email
+    if (email && !token && !password) {
+      const resBackend = await fetch("http://localhost:8000/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Erreur lors de l'envoi de l'email de réinitialisation");
+      // Toujours parser en JSON
+      const data = await resBackend.json();
+      return new Response(JSON.stringify(data), {
+        status: resBackend.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Réinitialisation du mot de passe avec token
+    if (token && password) {
+      const resBackend = await fetch(`http://localhost:8000/reset-password/reset/${token}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plainPassword: password }),
+      });
+
+      const data = await resBackend.json();
+      return new Response(JSON.stringify(data), {
+        status: resBackend.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Données invalides
+    return new Response(JSON.stringify({ message: "Données manquantes ou invalides" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("Erreur API resetPassword:", err);
+    return new Response(JSON.stringify({ message: "Erreur serveur" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-
-  return res.json();
-}
-
-/**
- * Valider le token et réinitialiser le mot de passe
- * @param {string} token
- * @param {string} newPassword
- * @returns {Promise<Object>}
- */
-export async function resetPassword(token, newPassword) {
-  const res = await fetch(`${API_BASE_URL}/reset/${token}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ plainPassword: newPassword }),
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Erreur lors de la réinitialisation du mot de passe");
-  }
-
-  return res.json();
 }
