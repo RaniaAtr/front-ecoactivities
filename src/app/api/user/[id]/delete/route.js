@@ -1,12 +1,22 @@
+import { cookies } from "next/headers";
+
 export async function DELETE(req, { params }) {
-  const token = req.headers.get("authorization")?.split(" ")[1]; // extrait le token
+  const cookieStore = cookies();
+  const token = cookieStore.get("token"); // ton cookie JWT
   const id = params.id;
+
+  if (!token) {
+    return new Response(JSON.stringify({ message: "Non autorisé" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const res = await fetch(`http://127.0.0.1:8000/api/users/${id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.value}`,
       },
     });
 

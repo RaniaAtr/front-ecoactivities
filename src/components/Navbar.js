@@ -3,8 +3,17 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { User, ShoppingCart } from "lucide-react";
+import { useCart } from "@/context/CartContext"; // importer le contexte
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+  const { cart } = useCart(); // récupérer le panier
+  const router = useRouter();
+
+  const handleCartClick = () => {
+    router.push("/cart"); // redirection vers la page du panier
+  };
+
   return (
     <nav className="bg-green-600 px-6 py-4">
       <div className="flex items-center justify-between h-10">
@@ -28,13 +37,26 @@ export default function Navbar() {
         </div>
 
         {/* Icônes profil/panier à droite */}
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center relative">
           <Link href="/profil" title="Mon profil">
-            <User size={32} className="text-black hover:text-gray-700 cursor-pointer transition-colors" />
+            <User
+              size={32}
+              className="text-black hover:text-gray-700 cursor-pointer transition-colors"
+            />
           </Link>
-          <Link href="/panier" title="Panier">
-            <ShoppingCart size={32} className="text-black hover:text-gray-700 cursor-pointer transition-colors" />
-          </Link>
+
+          {/* Panier avec badge */}
+          <div className="relative cursor-pointer" onClick={handleCartClick} title="Panier">
+            <ShoppingCart
+              size={32}
+              className="text-black hover:text-gray-700 transition-colors"
+            />
+            {cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                {cart.length}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

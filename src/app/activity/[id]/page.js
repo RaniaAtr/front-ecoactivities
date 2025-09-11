@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Filters from "@/components/Filters";
+import { useCart } from "@/context/CartContext";
 // ⚠️ Footer à créer après, pour l’instant placeholder
 // import Footer from "@/components/Footer";
 
@@ -13,6 +14,9 @@ export default function ActivityDetail() {
   const [activity, setActivity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [addedMessage, setAddedMessage] = useState(false);
+
+  const { addToCart } = useCart(); // on récupère la fonction du context
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -31,6 +35,19 @@ export default function ActivityDetail() {
 
     if (id) fetchActivity();
   }, [id]);
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: activity.id,
+      titre: activity.titre,
+      price: activity.tarif,
+      duree: activity.duree,
+    });
+
+    // Afficher un message de confirmation pendant 2 secondes
+    setAddedMessage(true);
+    setTimeout(() => setAddedMessage(false), 2000);
+  };
 
   if (loading) return <p className="text-center mt-10">Chargement...</p>;
   if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
@@ -97,9 +114,20 @@ export default function ActivityDetail() {
               </p>
             </div>
 
-            <button className="mt-6 bg-green-600 text-white text-lg font-semibold px-6 py-3 rounded-lg shadow hover:bg-green-700 transition">
-              Réserver
-            </button>
+            <div className="flex flex-col items-start mt-6">
+              <button
+                onClick={handleAddToCart}
+                className="bg-green-600 text-white text-lg font-semibold px-6 py-3 rounded-lg shadow hover:bg-green-700 transition"
+              >
+                Ajouter au panier
+              </button>
+
+              {addedMessage && (
+                <span className="text-green-700 font-semibold mt-2">
+                  Activité ajoutée au panier !
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

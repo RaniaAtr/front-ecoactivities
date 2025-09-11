@@ -20,7 +20,6 @@ export default function HomePage() {
     };
     fetchActivities();
   }, []);
-
   // Callback pour mettre à jour après recherche
   const handleResults = (data) => {
     setActivities(data);
