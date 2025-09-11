@@ -1,9 +1,11 @@
-// Fonction pour récupérer les infos de l'utilisateur connecté
+import { cookies } from "next/headers";
 
-export async function GET(request) {
-  const authHeader = request.headers.get("authorization");
+export async function GET() {
+  // ✅ Attendre le cookieStore
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token"); // token est un objet { name, value }
 
-  if (!authHeader) {
+  if (!token) {
     return new Response(JSON.stringify({ message: "Non autorisé" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
@@ -13,7 +15,8 @@ export async function GET(request) {
   const res = await fetch("http://127.0.0.1:8000/api/users/me", {
     method: "GET",
     headers: {
-      Authorization: authHeader,
+      Authorization: `Bearer ${token.value}`, // injecte le JWT
+      "Content-Type": "application/json",
     },
   });
 
@@ -21,9 +24,6 @@ export async function GET(request) {
 
   return new Response(JSON.stringify(data), {
     status: res.status,
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
   });
 }
-

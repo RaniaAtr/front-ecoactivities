@@ -1,10 +1,13 @@
 // Fonction pour modifier ses propres infos
 
+import { cookies } from "next/headers";
+
 export async function PUT(request, { params }) {
   const { id } = params;
-  const authHeader = request.headers.get("authorization");
+  const cookieStore = cookies();
+  const token = cookieStore.get("token");
 
-  if (!authHeader) {
+  if (!token) {
     return new Response(JSON.stringify({ message: "Non autorisé" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
@@ -17,7 +20,7 @@ export async function PUT(request, { params }) {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: authHeader,
+      Authorization: `Bearer ${token.value}`,
     },
     body: JSON.stringify(body),
   });
@@ -26,8 +29,7 @@ export async function PUT(request, { params }) {
 
   return new Response(JSON.stringify(data), {
     status: res.status,
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
   });
 }
+
