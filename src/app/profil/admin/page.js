@@ -10,6 +10,17 @@ export default function AdminProfilPage() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
+  // 🔹 Fonction de déconnexion
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/logout", { method: "POST" });
+      if (!res.ok) throw new Error("Erreur lors de la déconnexion");
+      router.push("/login"); // redirection après logout
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,7 +91,18 @@ export default function AdminProfilPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-green-50 p-6 space-y-6">
+
       <h1 className="text-3xl font-bold text-green-700">Espace Admin</h1>
+
+      {/* 🔹 Bouton de déconnexion */}
+      <div className="w-full flex justify-end mb-4">
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Déconnexion
+        </button>
+      </div>
 
       {/* 🔹 Réservations */}
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-3xl">

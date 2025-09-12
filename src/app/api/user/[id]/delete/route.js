@@ -1,35 +1,43 @@
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-export async function DELETE(req, { params }) {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token"); // ton cookie JWT
-  const id = params.id;
+export async function DELETE(req, context) {
+  // 🔹 params doit être attendu
+  const { id } = await context.params;
 
-  if (!token) {
-    return new Response(JSON.stringify({ message: "Non autorisé" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+  // 🔹 cookies() doit aussi être attendu
+  const cookieStore = await cookies();
+  const tokenCookie = cookieStore.get("token");
+
+  if (!tokenCookie) {
+    return NextResponse.json({ message: "Non autorisé" }, { status: 401 });
   }
 
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/users/${id}`, {
+    const res = await fetch(`http://localhost:8000/api/users/${id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${tokenCookie.value}`,
+        "Content-Type": "application/json",
       },
     });
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      return new Response(JSON.stringify(data), { status: res.status });
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      const text = await res.text();
+      return NextResponse.json(
+        { message: "Réponse non JSON du serveur", raw: text },
+        { status: res.status }
+      );
     }
 
-    return new Response(JSON.stringify(data), { status: 200 });
-  } catch (error) {
-    return new Response(JSON.stringify({ message: "Erreur serveur" }), {
-      status: 500,
-    });
+    return NextResponse.json(data, { status: res.status });
+  } catch (err) {
+    return NextResponse.json(
+      { message: "Erreur côté frontend", error: err.message },
+      { status: 500 }
+    );
   }
 }

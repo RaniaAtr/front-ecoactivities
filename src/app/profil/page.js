@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 export default function ProfilPage() {
   const [user, setUser] = useState(null);
-  const [form, setForm] = useState({ prenom: "", nom: "", email: "" }); // plus de password
+  const [form, setForm] = useState({ prenom: "", nom: "", email: "" });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -13,6 +13,17 @@ export default function ProfilPage() {
   const [resError, setResError] = useState(null);
 
   const router = useRouter();
+
+  // 🔹 Fonction de déconnexion
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/logout", { method: "POST" });
+      if (!res.ok) throw new Error("Erreur lors de la déconnexion");
+      router.push("/login"); // redirection après logout
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   // 🔄 Charger les infos utilisateur
   useEffect(() => {
@@ -65,7 +76,7 @@ export default function ProfilPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(form), // plus de password
+        body: JSON.stringify(form),
       });
       const json = await res.json();
       if (!res.ok) throw json;
@@ -93,6 +104,17 @@ export default function ProfilPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-green-50 p-4 space-y-6">
+
+      {/* 🔹 Bouton de déconnexion */}
+      <div className="w-full flex justify-end mb-4">
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Déconnexion
+        </button>
+      </div>
+
       {/* FORMULAIRE PROFIL */}
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md space-y-4">
         <h2 className="text-2xl font-bold text-center text-green-700">Mon Profil</h2>
