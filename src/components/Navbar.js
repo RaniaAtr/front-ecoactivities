@@ -1,51 +1,66 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { User, ShoppingCart } from "lucide-react";
-import { useCart } from "@/context/CartContext"; // importer le contexte
+import { useCart } from "@/context/CartContext"; 
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const { cart } = useCart(); // récupérer le panier
+  const { cart } = useCart();
   const router = useRouter();
+  const [profileUrl, setProfileUrl] = useState("/profil"); // par défaut utilisateur normal
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/user/me", { credentials: "include" });
+        if (!res.ok) return; // pas connecté, on reste sur /profil
+        const data = await res.json();
+        if (data.roles?.includes("ROLE_ADMIN")) {
+          setProfileUrl("/profil/admin");
+        } else {
+          setProfileUrl("/profil");
+        }
+      } catch (err) {
+        console.error("Erreur récupération utilisateur :", err);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleCartClick = () => {
-    router.push("/cart"); // redirection vers la page du panier
+    router.push("/cart");
   };
 
   return (
-    <nav className="bg-green-600 px-6 py-4">
-      <div className="flex items-center justify-between h-10">
-        {/* Logo à gauche */}
+    <nav className="bg-green-600 px-2 py-2">
+      <div className="flex items-center justify-between h-20">
         <div className="bg-white h-full">
-          <Link href="/" className="relative block h-full w-28">
+          <Link href="/" className="relative block h-full w-40">
             <Image
               src="/logo/logo.jpg"
               alt="Logo du site"
               fill
-              className="object-contain cursor-pointer p-1"
+              className="object-contain cursor-pointer "
             />
           </Link>
         </div>
 
-        {/* Section centrale avec slogan */}
         <div className="flex-1 mx-4 text-center">
           <h1 className="text-black font-bold text-lg">
             Nature, Détente, Évasion : Vivez l'île-de-France autrement !
           </h1>
         </div>
 
-        {/* Icônes profil/panier à droite */}
         <div className="flex gap-4 items-center relative">
-          <Link href="/profil" title="Mon profil">
+          <Link href={profileUrl} title="Mon profil">
             <User
               size={32}
               className="text-black hover:text-gray-700 cursor-pointer transition-colors"
             />
           </Link>
 
-          {/* Panier avec badge */}
           <div className="relative cursor-pointer" onClick={handleCartClick} title="Panier">
             <ShoppingCart
               size={32}
@@ -60,9 +75,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Barre de recherche en dessous, avec marges */}
-      <div className="mt-4 mx-6 flex justify-center">
-        <div className="w-3/4">
+      <div className="mt-0 mx-6 flex justify-center">
+        <div className="w-1/2">
           <input
             type="text"
             placeholder="Rechercher..."
