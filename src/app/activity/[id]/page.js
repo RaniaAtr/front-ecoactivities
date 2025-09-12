@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Filters from "@/components/Filters";
+import Footer from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 // ⚠️ Footer à créer après, pour l’instant placeholder
 // import Footer from "@/components/Footer";
@@ -133,9 +134,7 @@ export default function ActivityDetail() {
       </div>
 
       {/* Footer placeholder */}
-      <div className="w-full bg-gray-800 text-white text-center py-6 mt-10">
-        Footer (à développer)
-      </div>
+      <Footer />
     </>
   );
 }

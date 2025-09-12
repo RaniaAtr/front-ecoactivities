@@ -2,6 +2,7 @@
 import Navbar from "../components/Navbar";
 import Filters from "../components/Filters";
 import ActivityCard from "../components/ActivityCard";
+import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
@@ -46,6 +47,8 @@ export default function HomePage() {
           </div>
         )}
       </div>
+      {/* ✅ Footer ajouté */}
+      <Footer />
   </div>
   );
 }
