@@ -49,7 +49,7 @@ export default function Navbar() {
 
         <div className="flex-1 mx-4 text-center">
           <h1 className="text-black font-bold text-lg">
-            Nature, Détente, Évasion : Vivez l'île-de-France autrement !
+            Nature, Détente, Évasion : Vivez l&apos;île-de-France autrement !
           </h1>
         </div>
 
