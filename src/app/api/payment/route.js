@@ -16,12 +16,15 @@ export async function POST(request) {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: formData,
-      redirect: 'manual',
     });
 
-    // Redirection directe
-    if (res.status === 302 || res.redirected) {
-      return Response.redirect(res.url);
+    // On récupère le JSON contenant l'URL Stripe
+    if (res.ok) {
+      const data = await res.json();
+      return new Response(JSON.stringify(data), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     return new Response('Erreur lors de la création de la session Stripe', { status: 400 });
