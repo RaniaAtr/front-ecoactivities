@@ -5,7 +5,7 @@ export async function POST(req) {
 
     // Demande de réinitialisation par email
     if (email && !token && !password) {
-      const resBackend = await fetch("http://localhost:8000/reset-password", {
+      const resBackend = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

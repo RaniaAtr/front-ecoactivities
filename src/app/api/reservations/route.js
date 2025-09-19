@@ -8,7 +8,7 @@ export async function GET() {
     return new Response(JSON.stringify({ message: "Non autorisé" }), { status: 401 });
   }
 
-  const res = await fetch("http://127.0.0.1:8000/api/reservations", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reservations`, {
     headers: { Authorization: `Bearer ${token.value}` },
   });
 

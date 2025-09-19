@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 // Récupérer les détails d'une activité (accessible à tous)
 
 export async function GET(req, { params }) {
-  const res = await fetch(`http://localhost:8000/api/activities/${params.id}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/activities/${params.id}`);
   const data = await res.json();
   return NextResponse.json(data);
 }

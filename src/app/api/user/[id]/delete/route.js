@@ -14,7 +14,7 @@ export async function DELETE(req, context) {
   }
 
   try {
-    const res = await fetch(`http://localhost:8000/api/users/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${tokenCookie.value}`,

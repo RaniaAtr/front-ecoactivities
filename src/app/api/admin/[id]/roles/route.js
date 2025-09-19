@@ -11,7 +11,7 @@ export async function PUT(req, context) {
   const { id } = params;
   const { roles } = await req.json();
 
-  const res = await fetch(`http://localhost:8000/api/users/${id}/roles`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${id}/roles`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
