@@ -4,7 +4,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login_check`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login_check`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

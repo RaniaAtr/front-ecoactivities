@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 // Récupérer toutes les activités (accessible à tous)
 export async function GET() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/activities`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/activities`);
   const data = await res.json();
   return NextResponse.json(data);
 }

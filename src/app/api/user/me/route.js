@@ -12,7 +12,7 @@ export async function GET() {
     });
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/me`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token.value}`, // injecte le JWT

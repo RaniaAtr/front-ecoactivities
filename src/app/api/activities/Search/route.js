@@ -17,7 +17,7 @@ export async function GET(req) {
     if (tag) queryParams.append('tag', tag);
     if (lieu) queryParams.append('lieu', lieu);
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/activities/search?${queryParams.toString()}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/activities/search?${queryParams.toString()}`);
     
     // Toujours récupérer un JSON valide
     const data = await res.json();

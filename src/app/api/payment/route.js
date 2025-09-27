@@ -9,7 +9,7 @@ export async function POST(request) {
     const formData = new URLSearchParams();
     formData.append('activity_id', body.activity_id);
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/checkout`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

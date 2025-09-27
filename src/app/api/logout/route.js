@@ -11,7 +11,7 @@ export async function POST() {
     }
 
     // Appel au backend Symfony
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/logout`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,

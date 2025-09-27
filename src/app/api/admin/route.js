@@ -8,7 +8,7 @@ export async function GET() {
 
   if (!token) return NextResponse.json({ message: "Non autorisé" }, { status: 401 });
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
     method: "GET",
     headers: { 
       "Content-Type": "application/json",
