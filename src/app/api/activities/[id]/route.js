@@ -14,7 +14,7 @@ export async function PUT(req, { params }) {
   const token = req.cookies.get('token')?.value;
   const body = await req.json();
 
-  const res = await fetch(`http://localhost:8000/api/activities/${params.id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/activities/${params.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   const token = req.cookies.get('token')?.value;
 
-  const res = await fetch(`http://localhost:8000/api/activities/${params.id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/activities/${params.id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`, // Token pour vérifier l'admin côté backend
